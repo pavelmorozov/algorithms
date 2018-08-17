@@ -1,3 +1,4 @@
+#bad because slow!!!
 def fibonacci(n):
     if (n <= 1):
         return n
@@ -21,12 +22,13 @@ def fibonacciDynamicList(n):
 def fibonacciDynamicLessEquals(n):
     fib = [0,1]
     for i in range(2, n + 2):
-        fib.append(fib[i - 1] + fib[i - 2])
-        if fib[i]>=n: break 
+        nextF = fib[i - 1] + fib[i - 2]
+        if nextF>n: break
+        fib.append(nextF) 
     return fib
 
 
 #print(fibonacci(6))
-#print(fibonacciDynamic(6))
-#print(fibonacciDynamicList(6))
-print(fibonacciDynamicLessEquals(2))
+print(fibonacciDynamic(10))
+print(fibonacciDynamicList(10))
+print(fibonacciDynamicLessEquals(4181))
