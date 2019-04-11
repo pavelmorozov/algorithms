@@ -1,0 +1,305 @@
+*** Alert Service ***
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+class AlertService {
+    private final AlertDAO storage;
+    
+    public AlertService(AlertDAO alertDAO){
+        this.storage=alertDAO;
+    }
+		
+    public UUID raiseAlert() {
+        return this.storage.addAlert(new Date());
+    }
+	
+    public Date getAlertTime(UUID id) {
+        return this.storage.getAlert(id);
+    }	
+}
+
+interface AlertDAO{
+    public UUID addAlert(Date time);
+    public Date getAlert(UUID id);
+}
+
+class MapAlertDAO implements AlertDAO {
+    private final Map<UUID, Date> alerts = new HashMap<UUID, Date>();
+	
+    public UUID addAlert(Date time) {
+    	UUID id = UUID.randomUUID();
+        this.alerts.put(id, time);
+        return id;
+    }
+	
+    public Date getAlert(UUID id) {
+        return this.alerts.get(id);
+    }	
+}
+
+*** Merge names ***
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class MergeNames {
+    
+    public static String[] uniqueNames(String[] names1, String[] names2) {
+        Set<String> namesSet = new HashSet<String>();
+        Arrays.stream(names1).forEach(s -> namesSet.add(s));
+        Arrays.stream(names2).forEach(s -> namesSet.add(s));
+        String[] namesArray = (String[])(namesSet.toArray(new String[namesSet.size()]));
+        return  namesArray;
+    }
+    
+    public static void main(String[] args) {
+        String[] names1 = new String[] {"Ava", "Emma", "Olivia"};
+        String[] names2 = new String[] {"Olivia", "Sophia", "Emma"};
+        System.out.println(String.join(", ", MergeNames.uniqueNames(names1, names2))); // should print Ava, Emma, Olivia, Sophia
+    }
+}
+
+*** 3. Palindrome ***
+public class Palindrome {
+    public static boolean isPalindrome(String word) {
+        String lowcaseWord = word.toLowerCase();
+        for (int i = 0; i<= lowcaseWord.length()/2; i++) {
+        	if (lowcaseWord.charAt(i)!=lowcaseWord.charAt(lowcaseWord.length()-1- i)) return false; 
+        } 
+        return true;
+    }
+    
+    public static void main(String[] args) {
+        System.out.println(Palindrome.isPalindrome("Deleveled"));
+    }
+}
+
+*** 4. Binary Search Tree ***
+    public static boolean contains(Node root, int value) {
+       	if (root == null) return false;
+        if (value < root.value) {
+        	return contains(root.left, value);
+        }if (value > root.value) {
+        	return contains(root.right, value);
+        }else return true;
+
+    }
+
+
+*** 5. Song ***
+    public boolean isRepeatingPlaylist() {
+    	Set<Song> processedSongs = new HashSet<Song>();
+    	Song currentSong = this;
+    	while (currentSong!=null) {
+    		if (processedSongs.contains(currentSong)) return true;
+    		processedSongs.add(currentSong);
+    		currentSong = currentSong.nextSong;
+    	}
+    	return false;
+    }
+
+*** 6. User Input ***
+    public static class TextInput {
+		private StringBuilder sb = new StringBuilder();
+		public void add(char c) {
+			sb.append(c);
+		}
+		public String getValue() {
+			return sb.toString();
+		}
+	}
+
+	public static class NumericInput extends TextInput{
+		public NumericInput() {
+			super();
+		}
+		@Override
+		public void add(char c) {
+			if (Character.isDigit(c)) super.sb.append(c);
+		}
+	}
+
+*** 7. Account Test ***
+    @Test
+    public void depositWithdrawTest() {
+        Account account = new Account(-20);
+        
+        boolean flag = false; 
+        
+        Assert.assertEquals(0d, account.getOverdraftLimit(), epsilon);
+        
+        flag = account.deposit(-1d);
+        Assert.assertFalse(flag);
+        Assert.assertEquals(0d, account.getBalance(), epsilon);
+        
+        flag = account.withdraw(-1);
+        Assert.assertFalse(flag);
+        Assert.assertEquals(0d, account.getBalance(), epsilon);
+        
+        account.deposit(1d);
+        Assert.assertEquals(1d, account.getBalance(), epsilon);
+        
+        account.withdraw(1d);
+        Assert.assertEquals(0d, account.getBalance(), epsilon);
+        
+        account = new Account(5);
+        flag = account.withdraw(6d);
+        Assert.assertFalse(flag);
+        Assert.assertEquals(0d, account.getBalance(), epsilon);
+        
+        account = new Account(5);
+        flag = account.deposit(1d);
+        Assert.assertTrue(flag);
+        flag = account.withdraw(1d);
+        Assert.assertTrue(flag);
+    }
+
+*** 8. Two Sum ***
+    public static int[] findTwoSum(int[] list, int sum) {
+                Map<Long, Integer> complements = new HashMap<>();
+
+        for (int i = 0; i < list.length; i++) {
+            Integer complementIndex = complements.get((long)list[i]);
+            if (complementIndex != null) {
+                return new int[]{complementIndex, i};
+            }
+
+            // it's possible that for large targets and a negative input
+            // that we might overflow the int type
+            long complement = (long)sum - list[i];
+            complements.put(complement, i);
+        }
+
+        return null;
+    }
+
+*** 9. Decorator Stream ***
+public class DecoratorStream extends OutputStream
+{
+    private OutputStream stream;
+    private String prefix;
+    
+    private boolean firstFlag = true;
+
+    public DecoratorStream(OutputStream stream, String prefix) {
+        super();
+        this.stream = stream;
+        this.prefix = prefix;
+    }
+
+	@Override
+	public void write(int b) throws IOException {
+		byte[] result = new byte[1];
+		result[0] = (byte) (b);
+		stream.write(result, 0, 1);
+	}
+
+	@Override
+    public void write(byte[] b, int off, int len) throws IOException {
+    	byte[] lineBytes = null;
+    	if (firstFlag) {
+        	String s = (new String(prefix.getBytes("UTF-8"), "UTF-8")) + (new String(b, "UTF-8"));
+        	lineBytes = s.getBytes("UTF-8");
+        	firstFlag=false;
+    	}else {
+    		lineBytes = b;
+    	}
+    	
+        for (int i = 0 ; i < lineBytes.length ; i++) {
+            write(lineBytes[off + i]);
+        }
+    }
+    
+    @Override
+    public void write(byte[] b) throws IOException {
+        write(b, 0, b.length);
+    }
+    
+    public static void main(String[] args) throws IOException {
+        byte[] message = new byte[]{0x48, 0x65, 0x6c, 0x6c, 0x6f, 0x2c, 0x20, 0x77, 0x6f, 0x72, 0x6c, 0x64, 0x21};
+        try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            DecoratorStream decoratorStream = new DecoratorStream(baos, "First line: ");
+            decoratorStream.write(message);
+            
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(baos.toByteArray()), "UTF-8"))) {
+                System.out.println(reader.readLine());  //should print "First line: Hello, world!"
+            }
+        }
+    }
+}
+ 
+*** 10. Folders *** 
+    public static Collection<String> folderNames(String xml, char startingLetter) throws Exception {
+    	Set<String> tagNames = new HashSet<String>();
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        //Document document = builder.parse(xml);
+        Document document = builder.parse(new InputSource(new StringReader(xml)));
+        NodeList folders = document.getElementsByTagName("folder");
+        for (int i = 0; i < folders.getLength(); i++) {
+        	Node node = folders.item(i);
+        	String name = node.getAttributes().getNamedItem("name").getNodeValue();
+    		if (name.charAt(0)==startingLetter) {
+    			tagNames.add(name);
+    		}
+        }
+        return tagNames;
+    }
+
+
+*** 11. Sorted Search *** 
+    public static int countNumbers(int[] sortedArray, int lessThan) {
+		if (sortedArray.length == 0 ) return 0;
+		int left = 0, right = sortedArray.length;
+		int mid = 0;
+		while (left < right) {
+			mid = (right + left) / 2;
+			if (sortedArray[mid] == lessThan) {
+				while (mid>=0 && sortedArray[mid] == lessThan) 
+					mid--;
+				break;
+			}
+			else if (sortedArray[mid] > lessThan)
+				right = mid;
+			else
+				left = mid + 1;
+		}
+		while (mid > -1 && sortedArray[mid] >= lessThan)
+			mid--;
+		return mid + 1;
+    }
+
+*** 12. Train Composition ***
+public class TrainComposition {
+	
+    private final List<Integer> wagons = new LinkedList<>();
+	
+    public void attachWagonFromLeft(int wagonId) {
+    	wagons.add(0, wagonId);
+    }
+
+    public void attachWagonFromRight(int wagonId) {
+    	wagons.add(wagonId);
+    }
+
+    public int detachWagonFromLeft() {
+    	return wagons.remove(0);
+    }
+
+    public int detachWagonFromRight() {
+    	return wagons.remove(wagons.size()-1);
+    }
+
+    public static void main(String[] args) {
+        TrainComposition tree = new TrainComposition();
+        tree.attachWagonFromLeft(7);
+        tree.attachWagonFromLeft(13);
+        System.out.println(tree.detachWagonFromRight()); // 7 
+        System.out.println(tree.detachWagonFromLeft()); // 13
+    }
+}
+
+*** 13. Path ***

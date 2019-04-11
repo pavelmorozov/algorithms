@@ -1,0 +1,14 @@
+1. Alert Service 13:29 - 13:35
+2. Merge Names 13:39 - 13:48
+3. Palindrome 13:57 - 14:10
+4. Binary Search Tree 14:46 - 14:54
+5. Song 14:55 - 15:12 50%
+6. User Input 15:21 - 15:39
+7. Account Test 15:45 - 16:05
+8. Two Sum 16:06 - 16:18
+9. Decorator Stream 16:29 - 19:23 !!!
+10. Folders 19:24 - 21:00 !!!
+11. Sorted Search 21:00 - 22:25 !!!
+12. Train Composition 22:31 - 22:40
+13. Path 22:45 - 23:17
+
